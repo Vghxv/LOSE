@@ -9,6 +9,9 @@
 #define PROC_FILENAME "pid"
 #define BUFFER_SIZE 128
 
+static int current_pid = 0;
+static struct proc_dir_entry *proc_entry;
+
 static ssize_t proc_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
 {
     int rv = 0;
