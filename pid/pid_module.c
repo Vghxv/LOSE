@@ -4,79 +4,77 @@
 #include <linux/sched.h>
 #include <linux/sched/signal.h>
 #include <linux/uaccess.h>
+#include <linux/seq_file.h>
 #include <linux/slab.h> // for kmalloc and kfree
 
 #define PROC_FILENAME "pid"
-#define BUFFER_SIZE 128
 
-static int current_pid = 0;
 static struct proc_dir_entry *proc_entry;
 
-static ssize_t proc_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
-{
-    int rv = 0;
-    char buffer[BUFFER_SIZE];
-    static int completed = 0;
-    struct task_struct *tsk = NULL;
-    if (completed) {
-        completed = 0;
-        return 0;
-    }
-    tsk = pid_task(find_vpid(current_pid), PIDTYPE_PID);
-    if(tsk) {
-        // long state = tsk->__state;
+static int current_pid = 0;
 
-        rv = snprintf(buffer, BUFFER_SIZE,
-                      "command = [%s], pid = [%d], state=[%d]\n",
-                      tsk->comm, current_pid, tsk->__state);
-    }
-    else {
-        printk(KERN_INFO "Invalid PID %d!", current_pid);
-        return 0;
-    }
-    completed = 1;
-    if (copy_to_user(buf, buffer, rv)) {
-        rv = -1;
-    }
-    return rv;
-}
-
-static ssize_t proc_write(struct file *file, const char __user *usr_buf, size_t count, loff_t *pos){
+// this function returns the state of the task
+static ssize_t pid_write(struct file *file, const char __user *usr_buf, size_t count, loff_t *pos){
     char *k_mem;
     k_mem = kmalloc(count, GFP_KERNEL);
     if (copy_from_user(k_mem, usr_buf, count)) {
         printk(KERN_INFO "Error copying from user\n");
-        return -1;
+        return -EFAULT;
     }
     k_mem[count] = '\0';
     
     if(kstrtoint(k_mem, 10, &current_pid)) {
         printk(KERN_INFO "Error converting string to int\n");
-        return -1;
+        return -EFAULT;
     }
     printk(KERN_INFO "Set current PID to %d", current_pid);
     kfree(k_mem);
     return count;
 }
 
-static const struct proc_ops task_info_fops = {
-    .proc_read = proc_read,
-    .proc_write = proc_write,
-};
-
-int init_module()
+// this function logs the command, pid and state of the task
+static int task_report(struct seq_file *m , void *v)
 {
-    proc_entry = proc_create(PROC_FILENAME, 0, NULL, &task_info_fops);
+    struct task_struct *task;
+    task = get_pid_task(find_vpid(current_pid), PIDTYPE_PID);
+    if (task == NULL) {
+        printk(KERN_INFO "No task found with PID %d\n", current_pid);
+        return 0;
+    }
+    seq_printf(m, "command = [%s], pid = [%d], state = [%d]\n", task->comm, task->pid, task_state_to_char(task));
+    return 0;
+}
+
+// this function is called when the /proc file is opened
+static int pid_open(struct inode *inode, struct file *file)
+{    
+    return single_open(file, task_report, NULL);
+}
+
+// __init macro tells the kernel that this function is only used at initialization time
+static int __init custom_module_init(void) 
+{
+    // put it inside the init_module function to limit the scope of the struct proc_ops  
+    static const struct proc_ops pid_fops = {
+        .proc_open = pid_open,
+        .proc_read = seq_read,
+        .proc_lseek = seq_lseek,
+        .proc_release = single_release,
+        .proc_write = pid_write
+    };
+
+    proc_entry = proc_create(PROC_FILENAME, 0, NULL, &pid_fops);
     if (!proc_entry) {
         printk(KERN_ERR "Failed to create /proc/%s\n", PROC_FILENAME);
         return -ENOMEM;
     }
-
     printk(KERN_INFO "/proc/%s created\n", PROC_FILENAME);
+    
     return 0;
 }
 
-void cleanup_module()
+// __exit macro tells the kernel that this function is only used at exit time
+static void __exit custom_module_exit(void) 
 {
     if (proc_entry) {
         remove_proc_entry(PROC_FILENAME, NULL);
@@ -84,6 +82,10 @@ void cleanup_module()
     }
 }
 
+
+module_init(custom_module_init);
+module_exit(custom_module_exit);
+
 MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("Report the process information of a given PID");
-MODULE_AUTHOR("LOSE");
+MODULE_DESCRIPTION("PID Module");
+MODULE_AUTHOR("😎🥳");
