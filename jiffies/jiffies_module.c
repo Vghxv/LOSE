@@ -1,7 +1,6 @@
 #include <linux/kernel.h>
 #include <linux/proc_fs.h>
 #include <linux/module.h>
-#include <linux/uaccess.h>
 #include <linux/jiffies.h>
 #include <linux/seq_file.h>
 
@@ -92,10 +91,5 @@ module_init(custom_module_init);
 module_exit(custom_module_exit);
 
 MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("
-    Jiffies Module
-    This module creates two files in /proc:
-    - /proc/jiffies: prints the current value of jiffies
-    - /proc/seconds: prints the number of seconds since the module was loaded
-");
-MODULE_AUTHOR("vincent");
+MODULE_DESCRIPTION("Jiffies Module");
+MODULE_AUTHOR("😎");
