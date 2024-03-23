@@ -2,33 +2,27 @@
 #include <linux/kernel.h>
 #include <linux/proc_fs.h>
 #include <linux/sched.h>
-#include <linux/sched/signal.h>
-#include <linux/uaccess.h>
-
-// for kmalloc and kfree
-// #include <linux/slab.h>
 
 #define PROC_FILENAME "task_list"
-#define BUFFER_SIZE 128
 
-int init_module()
+static int __init custom_module_init(void)
 {
     struct task_struct *task;
-
-    printk(KERN_INFO "/proc/%s created\n", PROC_FILENAME);
- 
+    printk( KERN_INFO "module loaded\n");
     for_each_process(task) {
-        printk("command = [%s], pid = [%d], state = [%d]\n", task->comm, task->pid, task->__state);
+        printk("command = [%s], pid = [%d], state = [%d]\n", task->comm, task->pid, task_state_to_char(task));
     }
-
     return 0;
 }
 
-void cleanup_module()
+void __exit custom_module_exit(void)
 {
-    printk(KERN_INFO "/proc/%s removed\n", PROC_FILENAME);
+    printk( KERN_INFO "module removed\n");
 }
+
+module_init(custom_module_init);
+module_exit(custom_module_exit);
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Task List Module");
-MODULE_AUTHOR("LOSE");
+MODULE_AUTHOR("😎🥳😑🙂");
