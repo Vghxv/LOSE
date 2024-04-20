@@ -17,7 +17,7 @@ In this implementation, quick_sort function opens two threads to sort the two su
 
 ## Instructions
 
-To compile and run the program, simply 
+To compile and run the program, use the following commands:
 
 ```bash
 make

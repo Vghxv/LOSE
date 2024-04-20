@@ -49,4 +49,4 @@ To compile and run the program, use the following commands:
 make
 ```
 
-user will be prompted to input the c file containing the specific implementation of the scheduling algorithm. The program will then read the processes from the file and simulate the execution using the selected scheduling algorithm.
+User will be prompted to input the c file containing the specific implementation of the scheduling algorithm. The program will then read the processes from the file and simulate the execution using the selected scheduling algorithm.
