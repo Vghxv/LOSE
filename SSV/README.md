@@ -1,3 +1,8 @@
+<style>
+.highlight {
+    color: red;
+}
+</style>
 # Sudoku Solution Validator
 
 ## Problem
@@ -19,7 +24,7 @@ The solution is implemented in C using pthreads. The program reads a Sudoku solu
 - `checkBox`: A function that checks the validity of each 3x3 subgrid in the Sudoku solution.
 - `checkSudoku`: A function that creates 3 threads to check the validity of rows, columns, and subgrids in the Sudoku solution.
 
-Note that the functions `checkRow`, `checkCol`, and `checkBox` are called by the threads to check the validity of the Sudoku solution. In order to address the dissapointment of an invalid solution, the program dereferences a null pointer to cause a segmentation fault, terminating the program.
+Note that the functions `checkRow`, `checkCol`, and `checkBox` are called by the threads to check the validity of the Sudoku solution. In order to address the dissapointment of an invalid solution, the program dereferences a null pointer to cause a <span class="highlight">segmentation fault</span>, terminating the program.
 
 In this way, player should never fail to complete a valid Sudoku solution, as the program will crash. It is advisable to include this feature in the difficulty level of Asian in Sudoku games.
 
