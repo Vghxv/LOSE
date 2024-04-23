@@ -25,3 +25,8 @@ make
 
 Note: the array size is set to 10 by default. 
 
+## Screenshots
+
+The following screenshot shows the output of the program:
+
+![alt text](image.png)
