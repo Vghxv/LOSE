@@ -37,3 +37,9 @@ make
 ```
 
 Users will be prompted to choose between a random or a valid Sudoku solution, where 'T' indicates a valid solution and 'F' indicates a random solution, with a possibility of approximately 1/(2*10^77) to be valid. The program will then display the Sudoku solution and check its validity
+
+## Screenshots
+
+The following screenshot shows the output of the program:
+
+![alt text](image.png)
