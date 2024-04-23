@@ -52,3 +52,8 @@ The table above shows the execution times for calculating Fibonacci numbers up t
 | 40 | 1.119209s | 1.107290s | 1.109266s |
 
 
+# Screenshots
+
+The following screenshots illustrate the program's execution and output for calculating Fibonacci numbers up to 10 using the fast doubling algorithm with single-threaded. User may change the value of `n` to calculate Fibonacci numbers up to the desired limit.
+
+![alt text](image.png)
