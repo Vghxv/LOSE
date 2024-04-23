@@ -4,6 +4,7 @@
 #include <pthread.h>
 
 int num_points_circle = 0;
+
 void *runner(void *param) {
     int n = *(int*)param;
     for (int i = 0; i < n; i++) {
