@@ -50,3 +50,24 @@ make
 ```
 
 User will be prompted to input the c file containing the specific implementation of the scheduling algorithm. The program will then read the processes from the file and simulate the execution using the selected scheduling algorithm.
+
+## Screenshots
+FCFS:
+
+![alt text](image.png)
+
+SJF:
+
+![alt text](image-1.png)
+
+Priority-Based:
+
+![alt text](image-2.png)
+
+Round-Robin:
+
+![alt text](image-3.png)
+
+Priority with Round-Robin:
+
+![alt text](image-4.png)
