@@ -19,16 +19,6 @@ typedef enum {
     WORST_FIT
 } allocation_strategy;
 
-block_t *init_block(int start_address, int available_space, char *process_id) {
-    block_t *block = (block_t *)malloc(sizeof(block_t));
-    block->start_address = start_address;
-    block->available_space = available_space;
-    block->next = NULL;
-    strcpy(block->process_id, process_id);
-    return block;
-}
-
-// Function to find the block using the first fit strategy
 block_t* find_first_fit(block_t *main_memory, int allocation_size) {
     block_t *current = main_memory;
     while(current != NULL) {
@@ -37,10 +27,9 @@ block_t* find_first_fit(block_t *main_memory, int allocation_size) {
         }
         current = current->next;
     }
-    return NULL; // No suitable block found
+    return NULL;
 }
 
-// Function to find the block using the best fit strategy
 block_t* find_best_fit(block_t *main_memory, int allocation_size) {
     block_t *current = main_memory;
     block_t *best_fit = NULL;
@@ -55,7 +44,6 @@ block_t* find_best_fit(block_t *main_memory, int allocation_size) {
     return best_fit;
 }
 
-// Function to find the block using the worst fit strategy
 block_t* find_worst_fit(block_t *main_memory, int allocation_size) {
     block_t *current = main_memory;
     block_t *worst_fit = NULL;
@@ -68,44 +56,6 @@ block_t* find_worst_fit(block_t *main_memory, int allocation_size) {
         current = current->next;
     }
     return worst_fit;
-}
-
-// Function to allocate memory for a process
-void allocate_memory(block_t *block, int allocation_size, char *process_id) {
-    int left_over_space = block->available_space - allocation_size;
-    block->available_space = allocation_size;
-    strncpy(block->process_id, process_id, PROCESS_ID_SIZE);
-    if (left_over_space > 0) {
-        block_t *newBlock = init_block(block->start_address + allocation_size, left_over_space, "FREE");
-        block_t *temp = block->next;
-        block->next = newBlock;
-        newBlock->next = temp;
-    }
-}
-
-// Main function to request memory block using specified allocation strategy
-void request_block(block_t *main_memory, int allocation_size, char *process_id, allocation_strategy strategy) {
-    block_t *block = NULL;
-    switch (strategy) {
-        case FIRST_FIT:
-            block = find_first_fit(main_memory, allocation_size);
-            break;
-        case BEST_FIT:
-            block = find_best_fit(main_memory, allocation_size);
-            break;
-        case WORST_FIT:
-            block = find_worst_fit(main_memory, allocation_size);
-            break;
-        default:
-            printf("Invalid allocation strategy\n");
-            return;
-    }
-
-    if (block != NULL) {
-        allocate_memory(block, allocation_size, process_id);
-    } else {
-        printf("No available space for process %s\n", process_id);
-    }
 }
 
 void merge_unused_adjacent_blocks(block_t *main_memory) {
@@ -124,7 +74,7 @@ void merge_unused_adjacent_blocks(block_t *main_memory) {
     }
 }
 
-void free_block(block_t *main_memory, char *process_id) {
+void free_blocks(block_t *main_memory, char *process_id) {
     block_t *current = main_memory;
     while(current != NULL) {
         if (strcmp(current->process_id, process_id) == 0) {
@@ -134,6 +84,61 @@ void free_block(block_t *main_memory, char *process_id) {
         current = current->next;
     }
     merge_unused_adjacent_blocks(main_memory);
+}
+
+block_t *init_block(int start_address, int available_space, char *process_id) {
+    block_t *block = (block_t *)malloc(sizeof(block_t));
+    block->start_address = start_address;
+    block->available_space = available_space;
+    block->next = NULL;
+    strcpy(block->process_id, process_id);
+    return block;
+}
+
+void allocate_blocks(block_t *block, int allocation_size, char *process_id) {
+    int left_over_space = block->available_space - allocation_size;
+    block->available_space = allocation_size;
+    strncpy(block->process_id, process_id, PROCESS_ID_SIZE);
+    if (left_over_space > 0) {
+        block_t *newBlock = init_block(block->start_address + allocation_size, left_over_space, "FREE");
+        block_t *temp = block->next;
+        block->next = newBlock;
+        newBlock->next = temp;
+    }
+}
+
+void request_block(block_t *main_memory, int allocation_size, char *process_id, allocation_strategy strategy) {
+    block_t *block = NULL;
+    switch (strategy) {
+        case FIRST_FIT:
+            block = find_first_fit(main_memory, allocation_size);
+            break;
+        case BEST_FIT:
+            block = find_best_fit(main_memory, allocation_size);
+            break;
+        case WORST_FIT:
+            block = find_worst_fit(main_memory, allocation_size);
+            break;
+        default:
+            printf("Invalid allocation strategy\n");
+            return;
+    }
+
+    if (block != NULL) {
+        allocate_blocks(block, allocation_size, process_id);
+    } else {
+        printf("No available space for process %s\n", process_id);
+    }
+}
+
+void free_list(block_t *main_memory) {
+    block_t *current = main_memory;
+    block_t *next;
+    while(current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
 }
 
 block_t *setup_memory_state() {
@@ -178,16 +183,6 @@ void report_memory_usage(block_t *main_memory) {
     }
 }
 
-void free_main_memory(block_t *main_memory) {
-    block_t *current = main_memory;
-    block_t *next;
-    while(current != NULL) {
-        next = current->next;
-        free(current);
-        current = next;
-    }
-}
-
 int main() {
     block_t *main_memory = setup_memory_state();
 
@@ -223,7 +218,7 @@ int main() {
         else if (strcmp(command, "free") == 0) {
             char *process_id = strtok(NULL, " ");
             process_id[strcspn(process_id, "\n")] = 0;
-            free_block(main_memory, process_id);
+            free_blocks(main_memory, process_id);
         }
         else if (strcmp(command, "report") == 0) {
             report_memory_usage(main_memory);
@@ -239,5 +234,5 @@ int main() {
             printf("Invalid command\n");
         }
     }
-    free_main_memory(main_memory);
+    free_list(main_memory);
 }
