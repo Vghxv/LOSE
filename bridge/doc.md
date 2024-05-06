@@ -1,8 +1,7 @@
-# Problem
-
+# General
 Create separate threads for northbound and southbound farmers using POSIX synchronization. When a farmer is on the bridge, the thread will sleep for a random period to simulate travel. The program should support creating multiple threads for both northbound and southbound farmers.
-# Usage
 
+# Usage
 ```bash
 make
 ```
