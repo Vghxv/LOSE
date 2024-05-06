@@ -1,15 +1,12 @@
 # General
-
 This code implements a simple producer-consumer problem solution using pthreads (POSIX threads) and semaphores in C. The producer-consumer problem involves two processes, the producer and the consumer, who share a common, fixed-size buffer as a queue. The producer produces items and places them into the buffer, while the consumer consumes items from the buffer.
 
 # Usage
-
 ```bash
 make
 ```
 
 # Implementation
-
 The implementation consists of several parts:
 
 1. **Constants**: 
@@ -41,4 +38,5 @@ The implementation consists of several parts:
 
 # Screenshots
 The following screenshots show the output of the program when run with five producer and five consumer threads.
+
 ![alt text](image.png)
