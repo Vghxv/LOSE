@@ -64,7 +64,6 @@ int request_resources(int customer_id, int request[]) {
         customers[customer_id].allocation[i] += request[i];
         customers[customer_id].need[i] -= request[i];
     }
-    system("clear");
     printf("Available: ");
     for (int i = 0; i < RESOURCES; i++) {
         printf("%d ", available[i]);
@@ -128,6 +127,10 @@ void* customer_thread(void* arg) {
     }
 }
 int main (int argc, char* argv[]) {
+    if (argc != RESOURCES + 1) {
+        fprintf(stderr, "Usage: %s <resource 1> <resource 2> <resource 3> <resource 4>\n", argv[0]);
+        return 1;
+    }
     for (int i = 0; i < RESOURCES; i++) {
         available[i] = atoi(argv[i + 1]);
     } 
