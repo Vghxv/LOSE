@@ -131,16 +131,12 @@ Consider a computer system with a 32-bit logical address and 8-KB page size. The
 ## Answer
 
 Both a conventional, single-level page table and an inverted page table in this scenario would have 128 entries each.
-
-To determine the number of entries in each type of page table, we need to calculate the number of pages and the number of frames in physical memory.
-
 Given:
 
-Logical address size: 32 bits
+Logical address size: 32 bits(2 ^ 32)
+Page size: 8 KB (2 ^ 13 bytes)
+Physical memory size: 1 GB (2 ^ 30 bytes)
 
-Page size: 8 KB (8 * 1024 bytes)
-
-Physical memory size: 1 GB (1 * 1024 * 1024 KB)
 
 First, let's calculate the number of pages and frames:
 
@@ -152,11 +148,11 @@ a. Conventional, single-level page table:
 
 In a conventional page table, each page entry corresponds to a page in memory.
 
-Number of entries = Number of pages = Physical memory size / Page size
-
-Number of entries = (1 * 1024 * 1024 KB) / (8 * 1024 bytes)
-
-Number of entries = 128, meaning there are 128 entries in the conventional, single-level page table.
+Number of entries
+= Number of pages = Physical memory size / Page size
+= (1 * 1024 * 1024 KB) / (8 * 1024 bytes)
+= 128
+meaning there are 128 entries in the conventional, single-level page table.
 
 b. Inverted page table:
 
@@ -167,13 +163,3 @@ Number of entries = Number of frames = Physical memory size / Page size
 Number of entries = (1 * 1024 * 1024 KB) / (8 * 1024 bytes)
 
 Number of entries = 128, meaning there are also 128 entries in the inverted page table.
-
-So, both a conventional, single-level page table and an inverted page table in this scenario would have 128 entries each.
-
-
-
-1.1 *80 >(1-x) * 160 + x * 84
-88 > 160 - 160x + 84x
-88 > 160 - 76x
-76x > 72
-x > 0.947
